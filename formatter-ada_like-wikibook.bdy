@@ -29,7 +29,7 @@ with Ada.Characters.Handling;
 -- or similar because the letter seems disallowed
 --
 -- "or else" ~> or#Boolean_shortcut_operator
--- "and then" ... not implemented yet, instead these are considere two tokens.
+-- "and then" ... not implemented yet, instead these are considered two tokens.
 
 package body Formatter.Ada_Like.WiKiBook is
 
@@ -120,25 +120,16 @@ package body Formatter.Ada_Like.WiKiBook is
          begin
             case state is
                when Pack | Dot =>
-                  -- Single id package names don't have a counter before
-                  -- the first '|' as in {{Ada/package 2|...
-
-                  if id_counter > 1 then
-                     Str_Store.insert(store, 1, 
-                        pack_name_prefix & NATURAL'wide_image(id_counter));
-                     Str_Store.append(store, pack_name_suffix);
-                  else
-                     Str_Store.insert(store, 1, pack_name_prefix);
-                     Str_Store.append(store, pack_name_suffix);
-                  end if;
+                  Str_Store.insert(store, 1, pack_name_prefix);
+                  Str_Store.append(store, pack_name_suffix);
 
                   -- dot hack: when the machine has read a dot as the last
                   -- token, but no id token following it, emit a dot template
-                  -- (dots are implicit in {{Ada/package 2|etc}}, if not
+                  -- (dots are implicit in {{Ada/package|etc}}, if not
                   -- emitted, there will be a missing dot.)
 
                   if state = Dot then
-                     Str_Store.append(store, "{{Ada/delimiter 2|dot|.}}");
+                     Str_Store.append(store, "{{Ada/delimiter|dot|.}}");
                   end if;
 
                when Reset | Started | Separator =>
@@ -301,12 +292,12 @@ package body Formatter.Ada_Like.WiKiBook is
             begin
                case del_txt(del_txt'first) is
                   when '|' | '!' => -- a redirection for '!'
-                     return " 2|vertical_line|&#124;";
+                     return "|vertical_line|&#124;";
                   when '(' => return "|(";
                   when ')' => return "|)";
                   when ''' => return "|'";
                   when ',' => return "|,";
-                  when '.' => return " 2|dot|.";
+                  when '.' => return "|dot|.";
                   when ':' => return "|:";
                   when ';' => return "|;";
                   when others => raise Program_Error;
@@ -319,23 +310,23 @@ package body Formatter.Ada_Like.WiKiBook is
                case del_txt(del_txt'first) is
                   when '<' =>
                      case d2 is
-                        when '<' => return " 2|left_label|<<";
-                        when '>' => return " 2|box|<>";
+                        when '<' => return "|left_label|<<";
+                        when '>' => return "|box|<>";
                         when others => raise Program_Error;
                      end case;
                   when '>' =>
                      case d2 is
-                        when '>' => return " 2|right_label|>>";
+                        when '>' => return "|right_label|>>";
                         when others => raise Program_Error;
                      end case;
                   when '.' =>
                      case d2 is
-                        when '.' => return " 2|double_dot|..";
+                        when '.' => return "|double_dot|..";
                         when others => raise Program_Error;
                      end case;
                   when '=' =>
                      case d2 is
-                        when '>' => return " 2|1=arrow|2==>";
+                        when '>' => return "|1=arrow|2==>";
                         when others => raise Program_Error;
                      end case;
                   when ':' =>
@@ -443,8 +434,8 @@ package body Formatter.Ada_Like.WiKiBook is
          function op1 return ASnip.STR is
             begin
                case op_txt(op_txt'first) is
-                  when '<' => return " 2|less_than|<";
-                  when '>' => return " 2|greater_than|>";
+                  when '<' => return "|less_than|<";
+                  when '>' => return "|greater_than|>";
                   when '=' => return "|1==";
                   when '*' | '+' | '/' |  '-' =>
                      return "|" & op_txt;
@@ -457,8 +448,8 @@ package body Formatter.Ada_Like.WiKiBook is
                pragma assert(op_txt(op_txt'first + 1) = '='
                                 or else op_txt(op_txt'first + 1) = '*');
                case op_txt(op_txt'first) is
-                  when '<' => return " 2|1=less_than_or_equal_to|2=" & op_txt;
-                  when '>' => return " 2|1=greater_than_or_equal_to|2=" & op_txt;
+                  when '<' => return "|1=less_than_or_equal_to|2=" & op_txt;
+                  when '>' => return "|1=greater_than_or_equal_to|2=" & op_txt;
                   when '/' => return "|1=" & op_txt;
                   when '*' => return "|" & op_txt;
                   when others => raise Program_Error;

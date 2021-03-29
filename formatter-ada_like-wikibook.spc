@@ -37,7 +37,7 @@ package Formatter.Ada_Like.WiKiBook is
 
    -- NOTES:
    -- Not every dotted name of a package like `A.B.C` is automatically
-   -- decorated as {{Ada/package 3|A|B|C}}. For example deciding that "is
+   -- decorated as {{Ada/package|A|B|C}}. For example deciding that "is
    -- new A.B.C" is part of an instantiation of generic package `A.B.C`
    -- needs more information than is available here now. (And by design,
    -- ASnip must decorate incorrect input, too.) The functions have access
