@@ -24,7 +24,7 @@ project ASnip is
    end case;
 
    for Object_Dir use "obj";
-   for Main use ("asnip-main.ada", "driver", "test_binsearch");
+   for Main use ("asnip-main.ada", "driver.ada", "test_binsearch.ada");
 
    package Compiler is
 
@@ -71,9 +71,9 @@ project ASnip is
 
       -- these units depend on Ada 2005 containers:
       for Switches ("asnip-lang_token-sequences.spc")
-         use Compiler_Default_Switches & "-gnat05";
+         use Compiler_Default_Switches & "-gnat12";
       for Switches ("asnip-token-sequences.spc")
-         use Compiler_Default_Switches & "-gnat05";
+         use Compiler_Default_Switches & "-gnat12";
    end Compiler;
 
    package Builder is
@@ -84,19 +84,20 @@ project ASnip is
              for Default_Switches ("Ada") use ("-O2", "-gnatn");
       end case;
       --for Executable_Suffix use "exe";
-      for Executable ("asnip-main.ada") use "asnip";
-      for Executable ("driver.ada") use "test-driver";
-      for Executable ("test_binsearch.ada") use "test-binsearch";
+      -- for Executable_File ("asnip-main.ada") use "asnip";
+      -- for Executable_File ("driver.ada") use "test-driver";
+      -- for Executable_File ("test_binsearch.ada") use "test-binsearch";
    end Builder;
 
    package Linker is
       -- linker option for imported Win32 functions
 
       case Op_Sys is
-         when "UNIX" =>
-            null;
+
          when "Windows_NT" =>
             for Switches ("asnip-main.ada") use ("-lkernel32");
+         when "UNIX" =>
+            for Switches ("asnip-main.ada") use ("");
       end case;
    end Linker;
 

@@ -24,9 +24,9 @@
 with ASnip.Lang_Token.Ada_Like;
 with ASnip.Ada_Language.Tests;
 
-pragma assertion_policy(check);
-
 package body ASnip.Lang_Token.Construction.Ada_Like is
+
+   pragma assertion_policy(check);
 
    use Token, Lang_Token.Ada_Like, Ada_Language;
 
