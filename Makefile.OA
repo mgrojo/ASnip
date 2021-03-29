@@ -1,0 +1,72 @@
+# This Makefile is for setup, an initial build using ObjectAda, and
+# producing doc files at your option. After running make once, everything
+# should be set up so that you can continue using only ObjectAda tools.
+
+# Adjust these:
+
+OBJECTADA=N:\opt\Aonix\ObjectAda.82
+
+CONTAINER_SRC=E:\work\src\Containers
+ASNIP_SRC=E:\work\src\Tools\ASnip
+
+CONTAINER_PRJ=E:\work\Projects\Containers.82.tmp
+ASNIP_PRJ=E:\work\Projects\ASnip.82.tmp
+
+# compilation options?
+#ADAFLAGS=-g -G -O1
+ADAFLAGS=-N -O2
+
+# "Win32", "UNIX" (not an OS, but a subdirectory)
+OP_SYS=Win32
+
+# how to remove a file
+delete = del
+
+# executables have an extension?
+exe=.exe
+
+################################################################
+PATH=%PATH%;$(OBJECTADA)\bin;
+
+all: ASnip.main$(exe)
+
+doc: force
+	xmlto -o doc html-nochunks asnip.xml
+	xmlto -o doc man asnip.xml
+
+
+ASnip.main$(exe): $(CONTAINER_PRJ)\ADA.LIB $(ASNIP_PRJ)\UNIT.MAP
+	cd $(ASNIP_PRJ)
+	adabuild $(ADAFLAGS) $*
+
+$(CONTAINER_PRJ)\ADA.LIB: $(CONTAINER_PRJ)
+	cd $(CONTAINER_PRJ)
+	adaopts -sd $(CONTAINER_SRC)
+	adacomp $(ADAFLAGS) -sr $(CONTAINER_SRC)\a-coinve.adb
+	adamake $(ADAFLAGS) -sr $(CONTAINER_SRC)\a-coinve.adb
+
+$(CONTAINER_PRJ):
+	mkdir $(CONTAINER_PRJ)
+
+# target also used for making the ADA.LIB
+$(ASNIP_PRJ)\UNIT.MAP: $(ASNIP_PRJ)
+	cd $(ASNIP_PRJ)
+	adaopts -strict -p $(CONTAINER_PRJ)
+	adaopts -strict -lp $(OBJECTADA)\apilib
+	adareg $(ASNIP_SRC)\*.spc
+	adareg $(ASNIP_SRC)\*.bdy
+	adareg $(ASNIP_SRC)\*.ada
+	adareg $(ASNIP_SRC)\$(OP_SYS)\*.bdy
+
+$(ASNIP_PRJ):
+	mkdir $(ASNIP_PRJ)
+
+force:
+
+clean:
+	$(delete) doc\asnip.l
+	$(delete) doc\asnip.html
+
+
+
+

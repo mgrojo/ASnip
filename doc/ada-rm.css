@@ -1,0 +1,16 @@
+/* ASnip CSS properties for RM style Ada like tokens. */
+
+/* Please see the CSS file "ada-antiq.css" for some comments. */
+
+pre { font-size: medium; font-family: "Courier New", Courier, monospace;
+    border: 1px solid black; padding: 1em; }
+
+.ada-attr { font-family: inherit; font-weight: bold; }
+.ada-cmt { font-family: Times, TimesNewRoman, "Times New Roman", serif; font-style: italic;
+          color: maroon; background-color: inherit; }
+.ada-del { font-family: inherit; }
+.ada-id { font-family: inherit; }
+.ada-op { font-family: inherit; }
+.ada-res { font-family: inherit; font-weight: bold; }
+
+.unk-id, .unk-sep { text-decoration: underline; }

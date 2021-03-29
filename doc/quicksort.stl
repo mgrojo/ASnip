@@ -1,0 +1,21 @@
+program example;
+
+   print(quicksort_s({24, 9, 223, 4, 28}));
+
+
+   procedure quicksort_s(s);  -- a set
+
+      if #s <= 1 then
+         return [arb s];
+      end if;
+
+      pivot := arb s;
+      return
+         quicksort_s({x: x in s | x < pivot}) +
+         [pivot] +
+         quicksort_s({x: x in s | x > pivot});
+
+   end quicksort_s;
+
+end example;
+

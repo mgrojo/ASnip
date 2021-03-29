@@ -1,0 +1,27 @@
+/* ASnip CSS properties for Algol report books style for Ada like tokens. */
+
+pre { font-size: medium; border: 2px solid teal; padding: 1em; }
+
+/* Each kind of token is associated with a "class" in the HTML sense.
+   All classes for tokens known to the ASnip Ada scanner have
+   an "ada-" prefix. The unknown tokens have a "unk-" prefix.
+   The Ada token kind is affixed to the respective prefixes. */
+
+.ada-attr { font-family: Helvetica, sans-serif; font-weight: bold;
+	   color: teal; background-color: inherit; }
+.ada-cmt { font-family: Times, "Times New Roman", serif; font-style: normal;
+          color: maroon; background-color: inherit; }
+.ada-del { font-family: Times, "Times News Roman", serif;
+           /* add a small space to accomodate for the slant of
+              characters before the delimiter */
+           padding-left: 0.3ex; }
+.ada-id { font-family: Times, "Times News Roman", serif; font-style: italic; }
+.ada-num { font-family: Times, "Times News Roman", serif; font-style: normal; }
+.ada-res { font-family: Helvetica, sans-serif; font-weight: bold;
+	  color: teal; background-color: inherit; }
+.ada-op { font-family: Times, "Times News Roman", serif;
+	 color: navy; background-color: inherit; }
+.ada-strng, h2 { color: navy; background-color: inherit; }
+
+
+.unk-id, .unk-sep { color: red; background-color: inherit; }

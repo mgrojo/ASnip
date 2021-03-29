@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE refentry PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN"
+ "file:/usr/share/xml/docbook/schema/dtd/4/docbookx.dtd">
+<refentry lang="en" >
+<refmeta revision="$ProjectVersion: R1.1 $">
+  <refentrytitle>ASnip Manual Page</refentrytitle>
+  <manvolnum>l</manvolnum>
+</refmeta>  
+<refnamediv>
+  <refname>asnip</refname>
+  <refpurpose>decorate source code snippets</refpurpose>
+</refnamediv>
+<refsynopsisdiv>
+<cmdsynopsis id="cmdsynopsis" xreflabel="Synopsis">
+  <command>asnip</command>
+    <arg choice="plain">from</arg>
+    <arg choice="req">
+      <synopfragmentref linkend="langs">lang</synopfragmentref>
+    </arg>
+    <arg choice="plain">generate</arg>
+    <arg choice="req">
+      <synopfragmentref linkend="formats">format</synopfragmentref>
+    </arg>
+    <arg choice="opt">
+      encoding
+      <synopfragmentref linkend="encodings">encoding</synopfragmentref>
+    </arg>
+<synopfragment id="langs" xreflabel="Supported Languages">
+    <group choice="plain">
+      <arg choice="plain">Ada</arg>
+    </group>
+</synopfragment>
+<synopfragment id="formats" xreflabel="Output Formats">
+    <group choice="plain">
+      <arg choice="plain">WiKiBook</arg>
+      <arg choice="plain">HTML</arg>
+      <arg choice="plain">text</arg>
+      <arg choice="plain">TeX</arg>
+    </group>
+</synopfragment>
+<synopfragment id="encodings" xreflabel="Input Encodings">
+    <group choice="plain">
+      <arg choice="plain">UTF-8</arg>
+      <arg choice="plain">UTF-16</arg>
+      <arg choice="plain">UTF-16LE</arg>
+      <arg choice="plain">ISO-8859-1</arg>
+    </group>
+</synopfragment>
+</cmdsynopsis>
+</refsynopsisdiv>
+<refsect1>
+  <title>Description</title>
+<para>
+<command>asnip</command> reads source text from input,
+correct or incorrect, adds markup, and writes this text to output.
+Possible kinds of markup are listed in
+<xref linkend="formats"/> of <xref linkend="cmdsynopsis"/>,
+and described in detail in <xref linkend="output-formats"/>.
+Comments are processed, too, although trivially.
+<remark>(To be added later: RTF, and XML, using a Relax NG schema
+based on GI names used by
+<ulink url="http://www.pushface.org/asis2xml/">ASIS2XML</ulink>.)
+</remark>
+</para>
+<para>
+  The input text can be any portion of program text,
+correct or incorrect,  provided it is
+written in one of the supported languages, <emphasis>or sufficiently
+similar</emphasis> (When the input language is Ada, then
+Eiffel, Delphi, SETL/2, etc. will be decorated
+to the extent their syntax is the same as ASnip's notion of Ada's,
+which is tolerant.)
+See <xref linkend="langs"/> of <xref linkend="cmdsynopsis"/>.
+</para>
+<para>
+<command>asnip</command> does <emphasis>not</emphasis> change
+indentation, character case, or anything else that has been carefully
+typed by the programmer.
+</para>
+<refsect2>
+  <title>Encodings</title>
+<para>
+Encoding instructs <command>asnip</command> to perform I/O 
+using 8 bit Latin-1 characters, UTF-8 BMP characters,
+or 16 bit characters in LE or BE form.
+</para>
+  <para>
+If not specified,
+<command>asnip</command> will try to guess the encoding from
+environment variables
+(<envar>LC_CTYPE</envar>, <envar>LANG</envar>, and <envar>LC_ALL</envar>,
+in this order). These are used only to control tranformations to internal
+WIDE_CHARACTERs and back.
+</para>
+<para>
+Input and output use the same character encoding.
+</para>
+</refsect2>
+<refsect2 id="output-formats">
+<title>Output Formats</title>
+<refsect3>
+<title>HTML</title>
+<para>
+HTML output wraps almost every language token in a
+<sgmltag>span</sgmltag> element.
+Each <sgmltag>span</sgmltag> element has a specific
+<varname>class</varname> attribute for use with style sheets.
+The values of these attributes start with a language prefix.
+It is <literal>ada-</literal> for the Ada like language.
+Two stylesheets are provided with the ASnip distribution.
+<ulink url="ada-rm.css">ada-rm.css</ulink> defines a RM like layout for the
+Ada like language (see <ulink url="sample-rm.html">sample</ulink>).
+<ulink url="ada-antiq.css">ada-antiq.css</ulink>
+makes the program text look a bit like program text in the Algol 60 report books
+(see <ulink url="sample-antiq.html">sample</ulink>).
+</para>
+</refsect3>
+<refsect3>
+<title>TeX</title>
+<para>
+Borrowing TeX markup from the WEB System of Structured Documentation,
+this module adds TeX macros around Ada tokens.
+The result may be <literal>\input</literal> to TeX texts.
+When you process a suitably prepared text using
+<command>tex</command> or <command>pdftex</command>,
+the DVI or PDF output
+(see <ulink url="sample.pdf">sample</ulink>)
+will pretend to have been produced by the WEB system.
+It will not, however, be a display of all the features
+of this system. (For LaTeX, either add a module,
+<xref linkend="extending"/>,
+or try <command>lgrind</command>.)
+</para>
+</refsect3>
+<refsect3>
+<title>Text</title>
+<para>
+This format amounts to an expensive 1:1 copy of the input text.
+It is mainly useful in testing ASnip's innards.
+</para>
+</refsect3>
+
+<refsect3>
+<title>WiKiBook</title>
+<para>This adds markup for Ada source text in the Wiki book
+<ulink url="http://en.wikibooks.org/wiki/Ada_Programming">Ada Programming</ulink>.
+</para>
+<para>
+As a special case, ASnip tries to find (hierarchical) package names as there is
+a special Wiki Book template for these packages. (The templates will
+create links to packages that are part of the book, by assumption.)
+If a package name is preceded by one of the words
+<literal>package</literal>,
+<literal>with</literal>, or
+<literal>use</literal>,
+the WiKiBook module will wrap successive name parts of a package name
+inside a single template. If it is not preceded by any of these,
+<command>asnip</command>
+wraps the id tokens and dot tokens of the package name separately.
+</para>
+</refsect3>
+</refsect2>
+
+<refsect2 id="extending">
+ <title>Extending</title>
+<para>
+Basically, you provide a package of function triples to be called for each
+kind of language token.
+These callback functions
+(<function>prefix_of_<replaceable>xyz</replaceable></function>,
+<function>image_of_<replaceable>xyz</replaceable></function>, and
+<function>suffix_of_<replaceable>xyz</replaceable></function>)
+produce a string made from information that they can obtain from a token
+of the <literal><replaceable>xyz</replaceable></literal> kind.
+(See for example
+<classname role="package">Formatter.Ada_Like.HTML</classname>.)
+Your functions will have to match the declarations of formal functions,
+see
+<classname role="package">ASnip.Printing.Ada_Like</classname>.
+An instance of this package is used as actual package parameter when
+instantiating the generic procedure
+<function>ASnip.IO.write_ada_like</function>.
+</para>
+<para>
+For adding a new output format to the driver program,
+see the switch labelled
+<literal>run</literal> in <function>ASnip.main</function>.
+</para>
+
+</refsect2>
+</refsect1>
+</refentry>

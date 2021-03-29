@@ -1,0 +1,118 @@
+project ASnip is
+
+   type Setup is ("Plain", "Tricks");
+   Flavor: Setup := external("FLAVOR", "Plain");
+      -- controls switch settings, "Plain" makes the tools emphasise
+      -- the Ada standard. "Tricks" removes some checks, and asks for
+      -- more optimization.
+
+   type OPERATING_SYSTEM is ("UNIX", "Windows_NT");
+      -- Decides which bodies to choose. "Windows_NT" is a typical
+      -- setting of the "OS" environment variable when running a recent
+      -- Windows OS, and the environment variable seem to be set by
+      -- default. So use this value.
+
+   Op_Sys: OPERATING_SYSTEM := external("OS", "UNIX");
+      -- for units that use OS specific external calls and names
+
+   Common_Source_Dirs :=  (".", "test", "obj");
+   case Op_Sys is
+      when "UNIX" =>
+         for Source_Dirs use Common_Source_Dirs & ("UNIX");
+      when "Windows_NT" =>
+         for Source_Dirs use Common_Source_Dirs & ("Win32");
+   end case;
+
+   for Object_Dir use "obj";
+   for Main use ("asnip-main.ada", "driver", "test_binsearch");
+
+   package Compiler is
+
+      Compiler_Default_Switches :=
+         ("-gnatwa", "-gnata", "-gnaty3o");
+
+      case Flavor is
+         when "Plain" =>
+            for Default_Switches ("Ada") use
+               Compiler_Default_Switches
+                  & "-gnatf" & "-gnato" & "-gnatE" & "-gnatVa";
+         when "Tricks" =>
+            for Default_Switches ("Ada") use
+               Compiler_Default_Switches;
+      end case;
+
+
+      -- turning some style checks off where the alphabetical ordering
+      -- of subprograms should be determined by a suffix of the
+      -- subprogram names, not by a prefix
+
+      for Switches ("asnip-printing-ada_like.spc")
+         use Compiler_Default_Switches & "-gnatyN3" & "-gnatwU";
+
+      for Switches ("formatter-ada_like-html.spc")
+         use Compiler_Default_Switches & "-gnatyN3";
+      for Switches ("formatter-ada_like-html.bdy")
+         use Compiler_Default_Switches & "-gnatyN3";
+
+      for Switches ("formatter-ada_like-plain_text.spc")
+         use Compiler_Default_Switches & "-gnatyN3";
+      for Switches ("formatter-ada_like-plain_text.bdy")
+         use Compiler_Default_Switches & "-gnatyN3";
+
+      for Switches ("formatter-ada_like-web.spc")
+         use Compiler_Default_Switches & "-gnatyN3";
+      for Switches ("formatter-ada_like-web.bdy")
+         use Compiler_Default_Switches & "-gnatyN3" & "-gnatwU";
+
+      for Switches ("formatter-ada_like-wikibook.spc")
+         use Compiler_Default_Switches & "-gnatyN3";
+      for Switches ("formatter-ada_like-wikibook.bdy")
+         use Compiler_Default_Switches & "-gnatyN3" & "-gnatwU";
+
+      -- these units depend on Ada 2005 containers:
+      for Switches ("asnip-lang_token-sequences.spc")
+         use Compiler_Default_Switches & "-gnat05";
+      for Switches ("asnip-token-sequences.spc")
+         use Compiler_Default_Switches & "-gnat05";
+   end Compiler;
+
+   package Builder is
+      case Flavor is
+          when "Plain" =>
+             for Default_Switches ("Ada") use ("-O1", "-g");
+          when "Tricks" =>
+             for Default_Switches ("Ada") use ("-O2", "-gnatn");
+      end case;
+      --for Executable_Suffix use "exe";
+      for Executable ("asnip-main.ada") use "asnip";
+      for Executable ("driver.ada") use "test-driver";
+      for Executable ("test_binsearch.ada") use "test-binsearch";
+   end Builder;
+
+   package Linker is
+      -- linker option for imported Win32 functions
+
+      case Op_Sys is
+         when "UNIX" =>
+            null;
+         when "Windows_NT" =>
+            for Switches ("asnip-main.ada") use ("-lkernel32");
+      end case;
+   end Linker;
+
+   package Naming is
+      for Specification_Suffix ("Ada") use ".spc";
+      for Implementation_Suffix ("Ada") use ".bdy";
+
+      for Body ("ASnip.main") use "asnip-main.ada";
+      for Body ("driver") use "driver.ada";
+      for Body ("test_binsearch") use "test_binsearch.ada";
+
+      for Spec ("ASnip.Support") use "asnip-support.ads";
+      for Body ("ASnip.Support") use "asnip-support.adb";
+      for Spec ("binary_search") use "binary_search.ads";
+      for Body ("binary_search") use "binary_search.adb";
+   end Naming;
+
+
+end ASnip;

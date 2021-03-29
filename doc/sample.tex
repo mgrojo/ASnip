@@ -1,0 +1,41 @@
+% Demo of ASnip using \TeX\ macros from WEB (webmac.tex).
+\input pdfwebmac
+
+
+%%%%%%%%%%%%%%%%
+% redefine \C : remove the Pascal commment braces around the comment text
+\def\C#1{\ifmmode\gdef\XX{\null$\null}\else\gdef\XX{}\fi % Pascal comments
+  \XX\hfil\penalty-1\hfilneg\quad#1\XX}%$-matching
+
+\def\title{ASnip Demo} % and we should not announce to be WEB output!
+
+\def\beginAda{\Y\P}
+\def\endAda{\par\fi}
+
+%%%%%%%%%%%%%%%%
+
+\N1. Hello.
+ASnip can decorate Ada source text borrowing macros from the
+standard \TeX\ file {\tt webmac.tex}. This file is part of the \TeX\
+distribution, for use with the {\tt weave} program, which translates
+literate programs written using Knuth's Web System of Structured
+Documentation.
+
+
+
+\M2. The following two programs have been decorated by ASnip, reading
+the very same source files that are used when making the HTML examples.
+First, Hello:
+
+\beginAda
+\input hello_body.in
+\endAda
+
+\M3. The SETL/2 program, seen through ASnip's Ada glasses.
+Again, ``{\tt program}'' is not a reserved word in Ada.
+
+\beginAda
+\input quicksort_body.in
+\endAda
+
+\bye

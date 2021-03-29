@@ -1,0 +1,68 @@
+# GNU make file for creating a release archive.
+# This file's name must not be "Makefile".
+# The file "Makefile" is checked out with the sources of the software,
+# prior to creating a ZIP archive.
+# Fetches the latest minor version of $(NAME) and makes it major version $(REL).
+# This make file very likely depends on UNIX.
+
+
+.PHONY: all clean stop zip binzip
+
+stop:
+	@echo ${release-id}
+	@echo Run this from the top level Makefile
+
+
+define release-id
+$(shell prcs info -r$(REL).@ $(NAME) | awk '{print $$2}')
+endef
+
+check: clean
+	prcs checkout $(NAME)
+	$(MAKE)
+	$(MAKE) doc
+	$(MAKE) test
+	$(MAKE) clean
+	touch check
+
+# Switch to new(!) version $(REL)
+# This should only replace keywords!
+zip: check
+	prcs checkin -r$(REL).@ $(NAME) $(NAME).prj
+	$(MAKE) clean
+	prcs checkout -r$(REL).@ $(NAME)
+	sh attach-license.sh
+	$(MAKE)
+	$(MAKE) doc
+	$(MAKE) -C doc -f Makefile
+	$(MAKE) -C doc -f Makefile sample.pdf
+	prcs execute -n --pre --exclude-project-file | \
+		zip $(NAME)-${release-id}-src.zip -@
+	zip -u $(NAME)-${release-id}-src.zip doc/asnip.html
+
+# creates a zip archive containting documentation, a windows binary,
+# and licensing info.
+DOC-FILES = sample-rm.html sample-antiq.html ada-rm.css ada-antiq.css \
+	asnip.html sample.tex sample.pdf \
+	hello.ada quicksort.stl
+
+pack:
+	mkdir -p pack
+
+# binaries made from release files. pack: hack. TODO
+binzip: pack zip
+	mkdir -p pack
+	cp -p $(foreach file,$(DOC-FILES),doc/$(file)) $(<)/
+	cp -p $(foreach file,README.txt forum.txt,$(file)) $(<)/
+	cp -p asnip.html $(<)/index.html
+	cd $(<); zip $(NAME)-${release-id}-bin.zip *
+	@echo '####################################################'
+	@echo 'DO NOT FORGET TO ADD AN EXECUTABLE!'
+	@echo 'See Directory "$(<)"'
+	@echo '####################################################'
+
+clean:
+	find . -depth -not -name 'Makefile.dist' \
+		-and -not -name '.*' \
+		-and -not -name attach-license.sh \
+		-exec rm -fr '{}' ';'
