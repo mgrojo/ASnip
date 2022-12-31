@@ -2,17 +2,17 @@ This file explains building ASnip. ASnip decorates source code with
 markup. See doc/asnip.html for how to use it. The license text is in
 file "forum.txt".
 
-    WHAT
-    BINARY DISTRIBUTION
-    BUILDING
-      Requirements
-      Documentation
-      Using ObjectAda
-      Using GNAT
-      Using AppletMagic
-      Using an Ada 95 compiler
-    INSTALLATION
-    MISCELLANEOUS NOTES
+:    WHAT
+:    BINARY DISTRIBUTION
+:    BUILDING
+:      Requirements
+:      Documentation
+:      Using ObjectAda
+:      Using GNAT
+:      Using AppletMagic
+:      Using an Ada 95 compiler
+:    INSTALLATION
+:    MISCELLANEOUS NOTES
 
 * WHAT
 
@@ -24,8 +24,8 @@ produces output suitable for printing, viewing, or including.
    * TeX      - via Knuth's WEB macros (Try lgrind with LaTeX)
    * WiKiBook - adds markup used for the Ada Wikibook,
                 automatically links tokens to the Ada reference
-  (* RTF      - time permitting)
-  (* XML      - time permitting, using Simon Wright's ASIS based GIs.)
+   * (RTF      - time permitting)
+   * (XML      - time permitting, using Simon Wright's ASIS based GIs.)
 
 The asnip program operates on a stream of characters, so you can use it
 as an external tool with a number of text editors, in scripts, etc. It
@@ -82,35 +82,40 @@ only traditional features, so hopefully other make programs can use it
 as well.) Adjust a few variables (macros) at the start of the make file,
 to reflect your installation. Then run
 
-[\] nmake /f Makefile.OA
-
 This is what should happen:
 
-First, creates a libary for the Ada 95 version of Ada.Containers. For
+First, creates a library for the Ada 95 version of Ada.Containers. For
 example, assuming the container sources reside in X:\Containers, changes
 to a fresh directory, Y:\Containers\ProjectDir. Runs
 
+#+BEGIN_EXAMPLE
 	adaopts -sd X:\Containers
 	adacomp -O2 -sr X:\Containers\a-coinve.adb
 	adamake -O2 -sr X:\Containers\a-coinve.adb
+#+END_EXAMPLE
 
 Adds this library to ASnip's library search path. ASnip also needs the
 POSIX function getenv(2), and SetEnvironmentVariableA or setenv(2),
 resp.. Assuming ObjectAda is installed in directory O:\opt\ObjectAda,
 
+#+BEGIN_EXAMPLE
 	adaopts -p Y:\Containers\ProjectDir
 	adaopts -lp O:\opt\ObjectAda\apilib
+#+END_EXAMPLE
 
 Assuming the ASnip source files are in S:\ASnip, and a Win32 version is
 to be built,
 
+#+BEGIN_EXAMPLE
 	adareg S:\ASnip\*.spc S:\ASnip\*.bdy S:\ASnip\*.ada
 	adareg S:\ASnip\Win32\*.spc S:\ASnip\Win32\*.bdy
-
+#+END_EXAMPLE
 
 Finally,
 
+#+BEGIN_EXAMPLE
 	adabuild ASnip.main
+#+END_EXAMPLE
 
 If you want to run some tests, add units from the "test" subdirectory,
 and build them.
@@ -138,10 +143,12 @@ GCC Bug #27225) work. For building on Unix-like systems, adjust a few
 settings in the Makefile. The program configure.sh will help doing this.
 Thus
 
+#+BEGIN_EXAMPLE
 $ sh configure
 $ make
 $ make doc
 $ make test # optional
+#+END_EXAMPLE
 
 Make needs to be run only once if you just want to build an asnip
 executable. It needs to be re-run if you change files that have more than
